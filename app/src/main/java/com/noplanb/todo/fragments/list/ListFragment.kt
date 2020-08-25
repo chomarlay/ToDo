@@ -1,7 +1,9 @@
 package com.noplanb.todo.fragments.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -9,12 +11,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.noplanb.todo.R
 import com.noplanb.todo.data.viewmodel.ToDoViewModel
+import com.noplanb.todo.fragments.SharedViewModel
+import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
+
 
 class ListFragment : Fragment() {
 
     private val adapter: ListAdapter by lazy { ListAdapter() }
     private val toDoViewModel: ToDoViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +33,11 @@ class ListFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         toDoViewModel.getAllData.observe(viewLifecycleOwner, Observer{
             data-> adapter.setData(data)
+            sharedViewModel.checkIfEmptyDatabase(data)
+        })
+
+        sharedViewModel.emptyDatabase.observe(viewLifecycleOwner, Observer {
+            showEmptyDatabaseViews(it)
         })
 
         view.floatingActionButton.setOnClickListener {
@@ -38,8 +49,39 @@ class ListFragment : Fragment() {
         return view
     }
 
+    private fun showEmptyDatabaseViews(emptyDatabase: Boolean) {
+        if (emptyDatabase) {
+            no_data_imageView.visibility = View.VISIBLE
+            no_data_textView.visibility = View.VISIBLE
+        } else{
+            no_data_imageView.visibility = View.INVISIBLE
+            no_data_textView.visibility = View.INVISIBLE
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_delete_all -> confirmRemoveAll()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmRemoveAll() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setPositiveButton("Yes") {
+                _, _ -> toDoViewModel.deleteAll()
+            Toast.makeText(requireContext(), "Successfully deleted all items." , Toast.LENGTH_SHORT).show();
+
+
+        }
+        builder.setNegativeButton("No") {_,_ ->}
+        builder.setTitle("Delete All Items ")
+        builder.setMessage("Are you sure you want to remove all items")
+        builder.create().show()
     }
 
 }

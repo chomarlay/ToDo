@@ -7,10 +7,17 @@ import android.widget.AdapterView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.noplanb.todo.R
 import com.noplanb.todo.data.models.Priority
+import com.noplanb.todo.data.models.ToDoData
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
+
+    val emptyDatabase: MutableLiveData<Boolean> = MutableLiveData(true)
+    fun checkIfEmptyDatabase(todoData: List<ToDoData>){
+        emptyDatabase.value = todoData.isEmpty()
+    }
 
     val listener: AdapterView.OnItemSelectedListener  = object:
     AdapterView.OnItemSelectedListener{
@@ -41,6 +48,14 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                 Priority.LOW}
             else -> {
                 Priority.LOW}
+        }
+    }
+
+    fun parsePriorityToInt(priority: Priority) : Int {
+        return when (priority) {
+            Priority.HIGH -> 0
+            Priority.MEDIUM -> 1
+            Priority.LOW -> 2
         }
     }
 }
