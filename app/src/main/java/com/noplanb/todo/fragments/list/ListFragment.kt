@@ -7,14 +7,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.noplanb.todo.R
 import com.noplanb.todo.data.viewmodel.ToDoViewModel
 import com.noplanb.todo.databinding.FragmentListBinding
 import com.noplanb.todo.fragments.SharedViewModel
-import kotlinx.android.synthetic.main.fragment_list.*
-import kotlinx.android.synthetic.main.fragment_list.view.*
+import com.noplanb.todo.fragments.list.adapter.ListAdapter
 
 
 class ListFragment : Fragment() {
@@ -53,8 +53,23 @@ class ListFragment : Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+
+        //swipe to delete
+        swipeToDelete(recyclerView)
     }
 
+    private fun swipeToDelete(recyclerView: RecyclerView){
+        val swipeToDeleteCallback = object: SwipeToDelete(){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val itemToDelete = adapter.dataList[viewHolder.adapterPosition]
+                toDoViewModel.deleteItem(itemToDelete)
+                Toast.makeText(requireContext(),"Successfully deleted ${itemToDelete.title}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
     }
