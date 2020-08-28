@@ -2,6 +2,7 @@ package com.noplanb.todo.fragments.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 //import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.noplanb.todo.data.models.ToDoData
@@ -38,8 +39,13 @@ class ListAdapter(): RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
     }
 
     fun setData(toDoData : List<ToDoData>) {
+
+        val todoDiffUtil = ToDoDiffUtil(this.dataList, toDoData)
+        val todoDiffResult = DiffUtil.calculateDiff(todoDiffUtil)
         this.dataList = toDoData
-        notifyDataSetChanged()
+        todoDiffResult.dispatchUpdatesTo(this)
+//        notifyDataSetChanged()  // this is not good for performance,  use DiffUtil instead
+
     }
 
 }
