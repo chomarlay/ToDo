@@ -7,6 +7,9 @@ import com.noplanb.todo.data.models.ToDoData
 class ToDoRepository (private val toDoDao: ToDoDao){
 
     val getAllData : LiveData<List<ToDoData>> = toDoDao.getAllData()
+    val sortByLowPriority : LiveData<List<ToDoData>> = toDoDao.sortByLowPriority()
+    val sortByHighPriority : LiveData<List<ToDoData>> = toDoDao.sortByHighPriority()
+
     suspend fun insertData(toDoData: ToDoData) {
         toDoDao.insertData(toDoData)
     }
@@ -22,4 +25,9 @@ class ToDoRepository (private val toDoDao: ToDoDao){
     suspend fun deleteAll() {
         toDoDao.deleteAll()
     }
+
+    fun searchDatabase(searchQuery: String): LiveData<List<ToDoData>>{
+        return toDoDao.searchDatabase(searchQuery)
+    }
+
 }
