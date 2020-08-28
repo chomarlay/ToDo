@@ -17,6 +17,7 @@ import com.noplanb.todo.data.viewmodel.ToDoViewModel
 import com.noplanb.todo.databinding.FragmentListBinding
 import com.noplanb.todo.fragments.SharedViewModel
 import com.noplanb.todo.fragments.list.adapter.ListAdapter
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 
 class ListFragment : Fragment() {
@@ -55,6 +56,7 @@ class ListFragment : Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+        recyclerView.itemAnimator = SlideInUpAnimator().apply { addDuration = 300 }
 
         //swipe to delete
         swipeToDelete(recyclerView)
@@ -97,7 +99,7 @@ class ListFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("Yes") {
                 _, _ -> toDoViewModel.deleteAll()
-            Toast.makeText(requireContext(), "Successfully deleted all items." , Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Successfully deleted all items." , Toast.LENGTH_SHORT).show()
 
 
         }
