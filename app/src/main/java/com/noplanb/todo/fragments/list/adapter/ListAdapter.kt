@@ -10,6 +10,7 @@ import com.noplanb.todo.databinding.RowLayoutBinding
 
 class ListAdapter(): RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
     var dataList = emptyList<ToDoData>()
+
     class MyViewHolder(private val binding: RowLayoutBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(toDoData: ToDoData){
             binding.toDoData = toDoData
